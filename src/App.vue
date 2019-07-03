@@ -25,12 +25,12 @@ export default {
   },
   methods: {
     async getJwt() {
-      const url = 'http://localhost:8000/api/get_jwt'
+      const url = 'http://localhost:8000/api/get_jwt/'
       let response = await axios.get(url)
       this.jwt = response.data.jwt
     },
     async sendMail() {
-      const url = 'http://localhost:8000/api/calce_contact'
+      const url = 'http://localhost:8000/api/calce_contact/'
       let data = {
         customer_name: "juan perez",
         customer_email: "email@example.com",
@@ -40,9 +40,7 @@ export default {
         HTTP_AUTHORIZATION: this.jwt
       }
       let response = await axios.post(url, data, {headers})
-      if(response.status !== 200) {
-        this.correoEnviado = false
-      }
+      this.correoEnviado = response.status === 200
     }
   }
 }
