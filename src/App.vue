@@ -1,17 +1,49 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <button @click="getJwt()">Obtener jwt</button>
+    <div v-if="jwt">jwt actual: {{ jwt }}</div>
+    <div v-else>Todavía no tengo ningún jwt</div>
+    <div v-if="jwt">
+      <button @click="sendMail()">
+        Enviar correo
+      </button>
+    </div> 
+    <div v-if="correoEnviado">Correo Enviado</div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      jwt: null,
+      correoEnviado: false
+    }
+  },
+  methods: {
+    async getJwt() {
+      const url = 'http://localhost:8000/api/get_jwt'
+      let response = await axios.get(url)
+      this.jwt = response.data.jwt
+    },
+    async sendMail() {
+      const url = 'http://localhost:8000/api/calce_contact'
+      let data = {
+        customer_name: "juan perez",
+        customer_email: "email@example.com",
+        message: "Just a simple message"
+      }
+      const headers = {
+        HTTP_AUTHORIZATION: this.jwt
+      }
+      let response = await axios.post(url, data, {headers})
+      if(response.status !== 200) {
+        this.correoEnviado = false
+      }
+    }
   }
 }
 </script>
